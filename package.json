@@ -1,0 +1,7 @@
+{
+    "name": "dataset-serialize2",
+    "version": "2.5.9",
+    "repository": "https://github.com/solussaude/dataset-serialize2.git",
+    "packageManager": "yarn@4.2.1",
+    "private": true
+}  
