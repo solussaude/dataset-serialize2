@@ -152,7 +152,7 @@ begin
   FFormatFloat := EmptyStr;
   FFormatDate := 'DD-MM-YYYY';
   FFormatTime := 'hh:nn:ss';
-  FFormatDateTime := 'dd-mm-yyyy hh:nn:ss';
+  FFormatDateTime := 'DD-MM-YYYY';
   FExportChildDataSetAsJsonObject := False;
   {$IF DEFINED(FPC)}
   FDecimalSeparator := '.';
