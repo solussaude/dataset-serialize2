@@ -330,7 +330,7 @@ begin
         if not Assigned(LJSONValue) then
           Continue;
         {$ELSE}
-        if not (AJSONObject.TryGetValue(TDataSetSerializeUtils.FormatCaseNameDefinition(LField.FieldName), LJSONValue) or (AJSONObject.TryGetValue(LField.FieldName, LJSONValue))) then
+        if not (AJSONObject.TryGetValue(TDataSetSerializeUtils.FormatCaseNameDefinition(LField.FieldName), LJSONValue) or (AJSONObject.TryGetValue(LField.DisplayName, LJSONValue))) then
           Continue;
         {$ENDIF}
         if LJSONValue is TJSONNull then
@@ -615,7 +615,7 @@ begin
   for LField in ADataSet.Fields do
     if LField.Required then
     begin
-      LFieldName := TDataSetSerializeUtils.FormatCaseNameDefinition(LField.FieldName);
+      LFieldName := TDataSetSerializeUtils.FormatCaseNameDefinition(LField.DisplayName);
       {$IF DEFINED(FPC)}
       LJSONValue := FJSONObject.Get(LFieldName, EmptyStr);
       if LJSONValue.Trim.Equals(EmptyStr) then
@@ -947,7 +947,7 @@ begin
         LKeyValue := AJSONObject.Get(TDataSetSerializeUtils.FormatCaseNameDefinition(LField.FieldName), EmptyStr);
         if LKeyValue.Trim.IsEmpty then
         {$ELSE}
-        if not AJSONObject.TryGetValue(TDataSetSerializeUtils.FormatCaseNameDefinition(LField.FieldName), LKeyValue) then
+        if not AJSONObject.TryGetValue(TDataSetSerializeUtils.FormatCaseNameDefinition(LField.DisplayName), LKeyValue) then
         {$ENDIF}
           Continue;
       end
