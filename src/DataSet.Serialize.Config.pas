@@ -1,4 +1,4 @@
-unit DataSet.Serialize.Config;
+﻿unit DataSet.Serialize.Config;
 
 {$IF DEFINED(FPC)}
   {$MODE DELPHI}{$H+}
@@ -121,11 +121,11 @@ begin
   begin
     FInstance := TDataSetSerializeConfig.Create;
     FInstance.CaseNameDefinition := cndLowerCamelCase;
-    FInstance.DataSetPrefix := ['mt', 'qry'];
+    FInstance.DataSetPrefix := ['mt', 'qry', 'q'];
     FInstance.DateInputIsUTC := True;
     FInstance.RemoveBlankSpaceFieldName := True;
     FInstance.DateIsFloatingPoint := False;
-    FInstance.DateTimeIsISO8601 := True;
+    FInstance.DateTimeIsISO8601 := False;
   end;
   Result := FInstance;
 end;
@@ -147,12 +147,12 @@ begin
   FExportNullValues := True;
   FExportNullAsEmptyString:= False;
   FExportOnlyFieldsVisible := True;
-  ExportEmptyDataSet := False;
+  ExportEmptyDataSet := True;
   FFormatCurrency := EmptyStr;
   FFormatFloat := EmptyStr;
-  FFormatDate := 'YYYY-MM-DD';
-  FFormatTime := 'hh:nn:ss.zzz';
-  FFormatDateTime := 'yyyy-mm-dd hh:nn:ss.zzz';
+  FFormatDate := 'DD-MM-YYYY';
+  FFormatTime := 'hh:nn:ss';
+  FFormatDateTime := 'dd-mm-yyyy hh:nn:ss';
   FExportChildDataSetAsJsonObject := False;
   {$IF DEFINED(FPC)}
   FDecimalSeparator := '.';

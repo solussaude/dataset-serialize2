@@ -1,4 +1,4 @@
-unit DataSet.Serialize.Export;
+﻿unit DataSet.Serialize.Export;
 
 {$IF DEFINED(FPC)}
   {$MODE DELPHI}{$H+}
@@ -416,7 +416,7 @@ begin
           end
           else
             LDataSetName := TDataSetSerializeUtils.FormatDataSetName(LNestedDataSet.Name);
-          if TDataSetSerializeConfig.GetInstance.Export.ExportChildDataSetAsJsonObject and (LNestedDataSet.RecordCount = 1) then
+          if ((TDataSetSerializeConfig.GetInstance.Export.ExportChildDataSetAsJsonObject) or (TFDDataSet(LNestedDataSet).Tag = 5)) and (LNestedDataSet.RecordCount <= 1) then
             Result.{$IF DEFINED(FPC)}Add{$ELSE}AddPair{$ENDIF}(LDataSetName, DataSetToJsonObject(LNestedDataSet))
           else
             Result.{$IF DEFINED(FPC)}Add{$ELSE}AddPair{$ENDIF}(LDataSetName, DataSetToJSONArray(LNestedDataSet, True));
