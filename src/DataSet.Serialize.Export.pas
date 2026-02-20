@@ -280,7 +280,10 @@ begin
     if TDataSetSerializeConfig.GetInstance.Export.ExportOnlyFieldsVisible then
       if not(LField.Visible) then
         Continue;
-    LKey := TDataSetSerializeUtils.FormatCaseNameDefinition(LField.FieldName);
+    if LField.DisplayName = LField.FieldName then
+      LKey := TDataSetSerializeUtils.FormatCaseNameDefinition(LField.DisplayName)
+    else
+      LKey := LField.DisplayName;
     if LField.IsNull then
     begin
       if TDataSetSerializeConfig.GetInstance.Export.ExportNullValues then
