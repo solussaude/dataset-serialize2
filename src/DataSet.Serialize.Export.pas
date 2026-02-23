@@ -1,4 +1,4 @@
-unit DataSet.Serialize.Export;
+﻿unit DataSet.Serialize.Export;
 
 {$IF DEFINED(FPC)}
   {$MODE DELPHI}{$H+}
@@ -280,7 +280,10 @@ begin
     if TDataSetSerializeConfig.GetInstance.Export.ExportOnlyFieldsVisible then
       if not(LField.Visible) then
         Continue;
-    LKey := TDataSetSerializeUtils.FormatCaseNameDefinition(LField.FieldName);
+    if LField.DisplayName = LField.FieldName then
+      LKey := TDataSetSerializeUtils.FormatCaseNameDefinition(LField.DisplayName)
+    else
+      LKey := LField.DisplayName;
     if LField.IsNull then
     begin
       if TDataSetSerializeConfig.GetInstance.Export.ExportNullValues then
@@ -416,7 +419,7 @@ begin
           end
           else
             LDataSetName := TDataSetSerializeUtils.FormatDataSetName(LNestedDataSet.Name);
-          if TDataSetSerializeConfig.GetInstance.Export.ExportChildDataSetAsJsonObject and (LNestedDataSet.RecordCount = 1) then
+          if ((TDataSetSerializeConfig.GetInstance.Export.ExportChildDataSetAsJsonObject) or (TFDDataSet(LNestedDataSet).Tag = 5)) and (LNestedDataSet.RecordCount <= 1) then
             Result.{$IF DEFINED(FPC)}Add{$ELSE}AddPair{$ENDIF}(LDataSetName, DataSetToJsonObject(LNestedDataSet))
           else
             Result.{$IF DEFINED(FPC)}Add{$ELSE}AddPair{$ENDIF}(LDataSetName, DataSetToJSONArray(LNestedDataSet, True));

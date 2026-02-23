@@ -330,7 +330,7 @@ begin
         if not Assigned(LJSONValue) then
           Continue;
         {$ELSE}
-        if not (AJSONObject.TryGetValue(TDataSetSerializeUtils.FormatCaseNameDefinition(LField.FieldName), LJSONValue) or (AJSONObject.TryGetValue(LField.FieldName, LJSONValue))) then
+        if not (AJSONObject.TryGetValue(TDataSetSerializeUtils.FormatCaseNameDefinition(LField.FieldName), LJSONValue) or (AJSONObject.TryGetValue(LField.DisplayName, LJSONValue))) then
           Continue;
         {$ENDIF}
         if LJSONValue is TJSONNull then
@@ -414,14 +414,39 @@ begin
                 LTryStrToDateTime := ISO8601ToDate(LJSONValue.Value, TDataSetSerializeConfig.GetInstance.DateInputIsUTC);
               LField.AsDateTime := DateOf(LTryStrToDateTime);
             end;
-          TFieldType.ftTimeStamp, TFieldType.ftDateTime:
+            TFieldType.ftTimeStamp, TFieldType.ftDateTime:
             begin
-              if LJSONValue.InheritsFrom(TJSONNumber) then
-                LTryStrToDateTime := StrToFloatDef(LJSONValue.Value, 0)
-              else if TDataSetSerializeConfig.GetInstance.DateTimeIsISO8601 then
+              if LJSONValue.Value.IsEmpty then
+              begin
+                LField.Clear;
+                Continue;
+              end;
+
+              if (LJSONValue.Value.Contains('Z')) then {Na nova versão do Serialize ja existe a funcionalidade}
                 LTryStrToDateTime := ISO8601ToDate(LJSONValue.Value, TDataSetSerializeConfig.GetInstance.DateInputIsUTC)
               else
-                TryStrToDateTime(VarToStr(LJSONValue.Value), LTryStrToDateTime);
+              begin
+                try
+                  LTryStrToDateTime := StrToDateTime(stringReplace(LJSONValue.Value,'-','/',[rfReplaceAll]));
+                except
+                  LTryStrToDateTime := 0;
+                end;
+              end;
+
+              if LTryStrToDateTime = 0 then
+              begin
+                if (Copy(LJSONValue.Value,5,1) = '-') and (Copy(LJSONValue.Value,8,1) = '-') and (LJSONValue.Value.Length = 10) then
+                begin
+                  LTryStrToDateTime := ISO8601ToDate(LJSONValue.Value, True);
+                end;
+              end;
+
+              if LTryStrToDateTime = 0 then
+              begin
+                LField.Clear;
+                Continue;
+              end;
+
               LField.AsDateTime := LTryStrToDateTime;
             end;
           TFieldType.ftTime:
@@ -590,7 +615,7 @@ begin
   for LField in ADataSet.Fields do
     if LField.Required then
     begin
-      LFieldName := TDataSetSerializeUtils.FormatCaseNameDefinition(LField.FieldName);
+      LFieldName := TDataSetSerializeUtils.FormatCaseNameDefinition(LField.DisplayName);
       {$IF DEFINED(FPC)}
       LJSONValue := FJSONObject.Get(LFieldName, EmptyStr);
       if LJSONValue.Trim.Equals(EmptyStr) then
@@ -922,7 +947,7 @@ begin
         LKeyValue := AJSONObject.Get(TDataSetSerializeUtils.FormatCaseNameDefinition(LField.FieldName), EmptyStr);
         if LKeyValue.Trim.IsEmpty then
         {$ELSE}
-        if not AJSONObject.TryGetValue(TDataSetSerializeUtils.FormatCaseNameDefinition(LField.FieldName), LKeyValue) then
+        if not AJSONObject.TryGetValue(TDataSetSerializeUtils.FormatCaseNameDefinition(LField.DisplayName), LKeyValue) then
         {$ENDIF}
           Continue;
       end
