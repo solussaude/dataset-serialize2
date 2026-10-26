@@ -205,6 +205,14 @@ begin
       Result := Result.ToUpper;
     cndLowerCamelCase, cndUpperCamelCase:
       begin
+        if (LCaseNameDefinition = cndLowerCamelCase) and (Pos('_', Result) = 0) then
+        begin
+          if Result = Result.ToUpper then
+            Result := Result.ToLower
+          else
+            Result := Result.Substring(0, 1).ToLower + Result.Substring(1);
+          Exit;
+        end;
         LField := Result.ToCharArray;
         Result := EmptyStr;
         I := Low(LField);
